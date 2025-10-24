@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>BNR32 View | Unity Gallery</title>
+    <link rel="shortcut icon" href="TemplateData/favicon.ico">
+    <link rel="stylesheet" href="TemplateData/style.css">
+
+    <style>
+      /* ===== 全体レイアウト ===== */
+      body {
+        margin: 0;
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        background: #eeeeee;
+        color: #222;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      #unity-container {
+        position: relative;
+        z-index: 1;
+        margin-top: 40px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        border-radius: 16px;
+        overflow: hidden;
+        background: #fff;
+      }
+
+      #unity-footer {
+        background: #fff;
+        border-top: 1px solid #eee;
+        text-align: center;
+        padding: 8px 0;
+      }
+
+      #unity-build-title {
+        font-weight: 600;
+        font-size: 14px;
+        color: #333;
+      }
+
+      /* ===== 車ビューセクション ===== */
+      #car-viewer {
+        position: relative;
+        z-index: 0;
+        margin-top: 80px;
+        padding: 40px;
+        background: #fff;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
+        width: 90%;
+        max-width: 1000px;
+        text-align: center;
+      }
+
+      #car-image {
+        width: 90%;
+        max-width: 800px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+      }
+      #car-image:hover {
+        transform: scale(1.02);
+      }
+
+      /* ===== ナビゲーションボタン ===== */
+      #car-viewer button {
+        background: #222;
+        color: white;
+        border: none;
+        width: 48px;
+        height: 48px;
+        margin: 10px;
+        font-size: 18px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+      #car-viewer button:hover {
+        background: #555;
+        transform: scale(1.1);
+      }
+
+      /* ===== カラーボタン ===== */
+      #color-buttons {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 16px;
+        margin-top: 24px;
+      }
+
+      .color-circle {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: 2px solid #ccc;
+        cursor: pointer;
+        transition: transform 0.2s, border-color 0.3s;
+      }
+
+      .color-circle:hover {
+        transform: scale(1.2);
+        border-color: #007aff;
+      }
+
+      footer {
+        margin: 80px 0 40px;
+        color: #999;
+        font-size: 13px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- ===== Unity WebGL プレイヤー ===== -->
+    <div id="unity-container" class="unity-desktop">
+      <canvas id="unity-canvas" width="960" height="600" tabindex="-1"></canvas>
+      <div id="unity-loading-bar">
+        <div id="unity-logo"></div>
+        <div id="unity-progress-bar-empty">
+          <div id="unity-progress-bar-full"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== 車ギャラリー部分 ===== -->
+    <div id="car-viewer">
+      <img id="car-image" src="images/white_1.png" alt="car">
+
+      <div style="margin-top:20px;">
+        <button onclick="prevAngle()">◀</button>
+        <button onclick="nextAngle()">▶</button>
+      </div>
+
+      <div id="color-buttons">
+        <div class="color-circle" style="background:white;" onclick="setColor('white')"></div>
+        <div class="color-circle" style="background:silver;" onclick="setColor('silver')"></div>
+        <div class="color-circle" style="background:#4b4b4b;" onclick="setColor('gunmetal')"></div>
+        <div class="color-circle" style="background:black;" onclick="setColor('black')"></div>
+        <div class="color-circle" style="background:red;" onclick="setColor('red')"></div>
+        <div class="color-circle" style="background:skyblue;" onclick="setColor('skyblue')"></div>
+        <div class="color-circle" style="background:blue;" onclick="setColor('blue')"></div>
+      </div>
+    </div>
+
+    <footer>© 2025 Haruki Kato — BNR32 Web Gallery</footer>
+
+    <!-- ===== Unityの読み込みスクリプト ===== -->
+    <script>
+      var container = document.querySelector("#unity-container");
+      var canvas = document.querySelector("#unity-canvas");
+      var loadingBar = document.querySelector("#unity-loading-bar");
+      var progressBarFull = document.querySelector("#unity-progress-bar-full");
+      var fullscreenButton = document.querySelector("#unity-fullscreen-button");
+      var warningBanner = document.querySelector("#unity-warning");
+
+      function unityShowBanner(msg, type) {
+        function updateBannerVisibility() {
+          warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';
+        }
+        var div = document.createElement('div');
+        div.innerHTML = msg;
+        warningBanner.appendChild(div);
+        if (type == 'error') div.style = 'background: red; padding: 10px;';
+        else {
+          if (type == 'warning') div.style = 'background: yellow; padding: 10px;';
+          setTimeout(function () {
+            warningBanner.removeChild(div);
+            updateBannerVisibility();
+          }, 5000);
+        }
+        updateBannerVisibility();
+      }
+
+      var buildUrl = "Build";
+      var loaderUrl = buildUrl + "/BNR32_View.loader.js";
+      var config = {
+        dataUrl: buildUrl + "/BNR32_View.data",
+        frameworkUrl: buildUrl + "/BNR32_View.framework.js",
+        codeUrl: buildUrl + "/BNR32_View.wasm",
+        streamingAssetsUrl: "StreamingAssets",
+        companyName: "DefaultCompany",
+        productName: "BNR32",
+        productVersion: "0.1",
+        showBanner: unityShowBanner,
+      };
+
+      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+        var meta = document.createElement('meta');
+        meta.name = 'viewport';
+        meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
+        document.getElementsByTagName('head')[0].appendChild(meta);
+        container.className = "unity-mobile";
+        canvas.className = "unity-mobile";
+      } else {
+        canvas.style.width = "960px";
+        canvas.style.height = "600px";
+      }
+
+      loadingBar.style.display = "block";
+
+      var script = document.createElement("script");
+      script.src = loaderUrl;
+      script.onload = () => {
+        createUnityInstance(canvas, config, (progress) => {
+          progressBarFull.style.width = 100 * progress + "%";
+        }).then((unityInstance) => {
+          loadingBar.style.display = "none";
+          fullscreenButton.onclick = () => {
+            unityInstance.SetFullscreen(1);
+          };
+        }).catch((message) => {
+          alert(message);
+        });
+      };
+      document.body.appendChild(script);
+    </script>
+
+    <!-- ===== 車ギャラリーのJS ===== -->
+    <script>
+      let currentAngle = 1;
+      let currentColor = 'white';
+      const maxAngle = 9;
+
+      function updateImage() {
+        const img = document.getElementById('car-image');
+        img.src = `images/${currentColor}_${currentAngle}.png`;
+      }
+
+      function nextAngle() {
+        currentAngle = currentAngle % maxAngle + 1;
+        updateImage();
+      }
+
+      function prevAngle() {
+        currentAngle = (currentAngle - 2 + maxAngle) % maxAngle + 1;
+        updateImage();
+      }
+
+      function setColor(color) {
+        currentColor = color;
+        updateImage();
+      }
+    </script>
+  </body>
+</html>
