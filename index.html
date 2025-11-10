@@ -20,20 +20,22 @@
       }
 
       /* ===== Unityエリア ===== */
+      
       #unity-container {
-        position: relative;
-        display: flex;
-        justify-content: center;  /* 🔹中央寄せ */
-        align-items: center;       /* 🔹縦も中央寄せ */
-        width: 100%;
-        max-width: 960px;
-        margin-top: 40px;
-        margin-bottom: 100px;      /* 🔹下に余白をつけてギャラリーと分離 */
-        background: #fff;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-        overflow: hidden;
-        border-radius: 12px;
+        position: relative !important;   /* ← 絶対配置を解除 */
+        left: auto !important;
+        top: auto !important;
+        transform: none !important;
+        margin: 0 auto 80px auto !important; /* 自然な中央寄せと下の余白 */
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        width: 100% !important;
+        max-width: 1200px !important; /* コンテンツ幅に合わせる */
+        height: auto !important;
+        background: #000; /* Unityの背景 */
       }
+
 
       /* Canvasを中央配置 */
       #unity-canvas {
