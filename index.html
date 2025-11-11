@@ -111,11 +111,12 @@
       /* === ギャラリーグリッド === */
       .gallery-grid {
         display: grid;
+
         grid-template-columns: repeat(2, 1fr); /* 2列に分割 */
         gap: 20px; /* 画像間の余白 */
         justify-items: center;
         max-width: 700px;
-        margin: 0 auto;
+        margin: 20px auto auto auto auto;
       }
 
       .gallery-grid img {
@@ -233,7 +234,6 @@
       .modal img {
         max-width: 90%;
         max-height: 85%;
-        border-radius: 10px;
         box-shadow: 0 0 30px rgba(255, 255, 255, 0);
         animation: zoomIn 0.3s ease;
       }
