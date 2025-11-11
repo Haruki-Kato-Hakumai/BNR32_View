@@ -21,25 +21,27 @@
 
       /* ===== Unityエリア ===== */
       #unity-container {
-        position: relative !important;
-        width: 100% !important;
-        max-width: none !important;
-        height: auto !important;
-        margin: 0 auto 80px auto !important;
+        position: relative !important;   /* ← 絶対配置を解除 */
+        left: auto !important;
+        top: auto !important;
+        transform: none !important;
+        margin: 0 auto 80px auto !important; /* 自然な中央寄せと下の余白 */
         display: flex !important;
         justify-content: center !important;
         align-items: center !important;
-        background: #000; /* 背景 */
+        width: 100% !important;
+        max-width: 1100px !important; /* コンテンツ幅に合わせる */
+        height: auto !important;
+        background: #000; /* Unityの背景 */
       }
 
-      /* Unity Canvas を全幅に広げる */
+
+      /* Canvasを中央配置 */
       #unity-canvas {
-        width: 100vw;       /* 🔹画面幅いっぱいに表示 */
-        height: 100vh;      /* 🔹画面高さいっぱい（必要に応じて変えてOK） */
+        width: 100%;
+        height: auto;
         display: block;
-        background: #000;
       }
-
 
       /* ===== 車ビューセクション ===== */
       #car-viewer {
