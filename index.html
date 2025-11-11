@@ -108,6 +108,28 @@
         border-color: #007aff;
       }
 
+      /* === ギャラリーグリッド === */
+      .gallery-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr); /* 2列に分割 */
+        gap: 20px; /* 画像間の余白 */
+        justify-items: center;
+        max-width: 700px;
+        margin: 0 auto;
+      }
+
+      .gallery-grid img {
+        width: 100%;
+        max-width: 320px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        transition: transform 0.3s ease;
+      }
+
+      .gallery-grid img:hover {
+        transform: scale(1.05);
+      }
+
       footer {
         margin: 80px 0 40px;
         color: #999;
@@ -163,7 +185,6 @@
         <img src="images/BNR32_red.jpeg" alt="BNR32_red" style="width: 300px;  box-shadow: 0 2px 8px rgba(0,0,0,0.3);">
       </div>
     </div>
-
 
     <footer>© 2025 Haruki Kato — BNR32 Web Gallery</footer>
 
